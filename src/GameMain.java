@@ -1,11 +1,13 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.Serial;
 import javax.swing.*;
 /**
  * Tic-Tac-Toe: Two-player Graphic version with better OO design.
  * The Board and Cell classes are separated in their own classes.
  */
 public class GameMain extends JPanel {
+    @Serial
     private static final long serialVersionUID = 1L; // to prevent serializable warning
 
     // Define named constants for the drawing graphics
@@ -20,9 +22,9 @@ public class GameMain extends JPanel {
     private Board board;         // the game board
     private State currentState;  // the current state of the game
     private Seed currentPlayer;  // the current player
-    private JLabel statusBar;    // for displaying status message
+    private final JLabel statusBar;    // for displaying status message
 
-    /** Constructor to setup the UI and game components */
+    /** Constructor to set up the UI and game components */
     public GameMain() {
 
         // This JPanel fires MouseEvent
@@ -32,16 +34,26 @@ public class GameMain extends JPanel {
                 int mouseX = e.getX();
                 int mouseY = e.getY();
                 // Get the row and column clicked
-                int row = mouseY / Cell.SIZE;
+//                int row = mouseY / Cell.SIZE;
                 int col = mouseX / Cell.SIZE;
 
                 if (currentState == State.PLAYING) {
-                    if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS
-                            && board.cells[row][col].content == Seed.NO_SEED) {
-                        // Update cells[][] and return the new game state after the move
-                        currentState = board.stepGame(currentPlayer, row, col);
-                        // Switch player
-                        currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+                    if (col >= 0 && col < Board.COLS) {
+                        for (int row = Board.ROWS - 1; row >= 0; row--) {
+                            if (board.cells[row][col].content == Seed.NO_SEED) {
+                                // Update cells[][] and return the new game state after the move
+                                currentState = board.stepGame(currentPlayer, row, col);
+                                // Switch player
+                                // Play appropriate sound clip
+                                if (currentState == State.PLAYING) {
+                                    SoundEffect.EAT_FOOD.play();
+                                } else {
+                                    SoundEffect.DIE.play();
+                                }
+                                currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+                                break;
+                            }
+                        }
                     }
                 } else {        // game over
                     newGame();  // restart the game
@@ -97,14 +109,6 @@ public class GameMain extends JPanel {
 
         // Print status-bar message
         if (currentState == State.PLAYING) {
-            if (currentPlayer==Seed.CROSS) {
-                SoundEffect.EAT_FOOD.play();
-            }
-            if (currentPlayer==Seed.NOUGHT) {
-                SoundEffect.EXPLODE.play();
-            }else {
-                SoundEffect.DIE.play();
-            }
             statusBar.setForeground(Color.BLACK);
             statusBar.setText((currentPlayer == Seed.CROSS) ? "X's Turn" : "O's Turn");
         } else if (currentState == State.DRAW) {
