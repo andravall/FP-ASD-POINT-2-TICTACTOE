@@ -54,7 +54,20 @@ public class Board {
         cells[selectedRow][selectedCol].content = player;
 
         // Compute and return the new game state
-        if (hasWon(player, selectedRow, selectedCol)) {
+        if (cells[selectedRow][0].content == player  // 3-in-the-row
+                && cells[selectedRow][1].content == player
+                && cells[selectedRow][2].content == player
+                || cells[0][selectedCol].content == player // 3-in-the-column
+                && cells[1][selectedCol].content == player
+                && cells[2][selectedCol].content == player
+                || selectedRow == selectedCol     // 3-in-the-diagonal
+                && cells[0][0].content == player
+                && cells[1][1].content == player
+                && cells[2][2].content == player
+                || selectedRow + selectedCol == 2 // 3-in-the-opposite-diagonal
+                && cells[0][2].content == player
+                && cells[1][1].content == player
+                && cells[2][0].content == player) {
             return (player == Seed.CROSS) ? State.CROSS_WON : State.NOUGHT_WON;
         } else {
             // Nobody win. Check for DRAW (all cells occupied) or PLAYING.
@@ -67,62 +80,6 @@ public class Board {
             }
             return State.DRAW; // no empty cell, it's a draw
         }
-    }
-
-    public boolean hasWon(Seed theSeed, int rowSelected, int colSelected) {
-        // Check for 4-in-a-line on the rowSelected
-        int count = 0;
-        for (int col = 0; col < COLS; ++col) {
-            if (cells[rowSelected][col].content == theSeed) {
-                ++count;
-                if (count == 3) return true;  // found
-            } else {
-                count = 0; // reset and count again if not consecutive
-            }
-        }
-
-        // Check for 4-in-a-line on the colSelected
-        count = 0;
-        for (int row = 0; row < ROWS; ++row) {
-            if (cells[row][colSelected].content == theSeed) {
-                ++count;
-                if (count == 3) return true;  // found
-            } else {
-                count = 0; // reset and count again if not consecutive
-            }
-        }
-
-        // Check for 4-in-a-line on the diagonal (top-left to bottom-right)
-        count = 0;
-        int startRow = Math.max(0, rowSelected - colSelected);
-        int startCol = Math.max(0, colSelected - rowSelected);
-        while (startRow < ROWS && startCol < COLS) {
-            if (cells[startRow][startCol].content == theSeed) {
-                ++count;
-                if (count == 3) return true;  // found
-            } else {
-                count = 0; // reset and count again if not consecutive
-            }
-            startRow++;
-            startCol++;
-        }
-
-        // Check for 4-in-a-line on the anti-diagonal (top-right to bottom-left)
-        count = 0;
-        startRow = Math.max(0, rowSelected - (COLS - 1 - colSelected));
-        startCol = Math.min(COLS - 1, colSelected + rowSelected);
-        while (startRow < ROWS && startCol >= 0) {
-            if (cells[startRow][startCol].content == theSeed) {
-                ++count;
-                if (count == 4) return true;  // found
-            } else {
-                count = 0; // reset and count again if not consecutive
-            }
-            startRow++;
-            startCol--;
-        }
-
-        return false;  // no 4-in-a-line found
     }
 
     /** Paint itself on the graphics canvas, given the Graphics context */
