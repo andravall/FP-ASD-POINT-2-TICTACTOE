@@ -1,9 +1,15 @@
-
+/**
+ * ES234317-Algorithm and Data Structures
+ * Semester Ganjil, 2024/2025
+ * Group Capstone Project
+ * Group #1
+ * 1 - 5026231159 - Mohammad Ferdinand Valliandra
+ * 2 - 5026231135 - Fachreza Aptadhi Kurniawan
+ * 3 - 5026231149 - Ananda Donelly Reksana
+ */
 
 import java.awt.*;
-/**
- * The Cell class models each individual cell of the game board.
- */
+
 public class Cell {
     // Define named constants for drawing
     public static final int SIZE = 120; // cell width/height (square)
@@ -21,12 +27,12 @@ public class Cell {
     public Cell(int row, int col) {
         this.row = row;
         this.col = col;
-        content = Seed.NO_SEED;
+        content = Seed.NO_SEED; // Initialize cell as empty
     }
 
-    /** Reset this cell's content to EMPTY, ready for new game */
+    /** Reset this cell's content to EMPTY, ready for a new game */
     public void newGame() {
-        content = Seed.NO_SEED;
+        content = Seed.NO_SEED; // Set content to no seed (empty state)
     }
 
     /** Paint itself on the graphics canvas, given the Graphics context */
